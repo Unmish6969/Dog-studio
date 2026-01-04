@@ -20,24 +20,36 @@ import { OrbitControls,useGLTF,useTexture } from '@react-three/drei'
         gl.outputColorSpace=THREE.SRGBColorSpace
     })
 
-    const textures=useTexture({
-      normalMap:"models/dog_normals.jpg",
-      sampleMatCap:"matcap/mat-2.png"
-    })
+    // const textures=useTexture({
+    //   normalMap:"models/dog_normals.jpg",
+    //   sampleMatCap:"matcap/mat-2.png"
+    // },(texture)=>{
+    //   texture.flipY=false
+    //   textures.colorSpace=THREE.SRGBColorSpace //for all it will be applied
+    // })
     //to fix textures which are by default upside down in three.js
-    textures.normalMap.flipY=false
-    textures.sampleMatCap.colorSpace=THREE.SRGBColorSpace
+    // textures.normalMap.flipY=false
+    // textures.colorSpace=THREE.SRGBColorSpace
+
+    //it is not working , the callback is not being called
+    //so
+    const [normalMap,sampleMatCap]=(useTexture(["models/dog_normals.jpg","matcap/mat-2.png"]))
+    .map(texture=>{
+      texture.flipY=false
+      texture.colorSpace=THREE.SRGBColorSpace
+      return texture
+    })
+
+    const dogMaterial=new THREE.MeshMatcapMaterial({
+      normalMap:normalMap,
+      matcap:sampleMatCap
+    })
     model.scene.traverse((child)=>{//traverse goes through all the children of the model
    // console.log("traversing",child)
     //console.log(child.name)
     if(child.name.includes("DOG")){
       //console.log(child.name)
-      child.material=new THREE.MeshMatcapMaterial({
-     
-     normalMap:textures.normalMap,
-     matcap:textures.sampleMatCap
-     
-      })
+      child.material=dogMaterial
     }
 
     })
