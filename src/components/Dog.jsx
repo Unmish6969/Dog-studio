@@ -1,8 +1,10 @@
-import {React,use,useEffect} from 'react'
+import {React,use,useEffect,useRef} from 'react'
 import * as THREE from 'three'
 import {Canvas,useThree} from '@react-three/fiber'
-
 import { OrbitControls,useGLTF,useTexture,useAnimations } from '@react-three/drei' 
+import gsap from 'gsap' 
+import {useGSAP} from '@gsap/react';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 //react-three-fiber is a react renderer for three.js
 //it hides a lot of code already 
 //scene light is already created by default
@@ -12,6 +14,11 @@ import { OrbitControls,useGLTF,useTexture,useAnimations } from '@react-three/dre
 //canvas is to create a three.js canvas in react
 //it is nothing but the DOM element where the 3D scene will be rendered which is returned in threejs by the renderer
  const Dog = () => {
+
+gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(useGSAP());
+
+
     const model=useGLTF("/models/dog.drc.glb")
     useThree(({camera,scene,gl})=>{
         //console.log(camera.position)
@@ -80,6 +87,36 @@ import { OrbitControls,useGLTF,useTexture,useAnimations } from '@react-three/dre
 
     })
 
+     const dogModel=useRef(model)
+    useGSAP(()=>{
+      const tl=gsap.timeline({
+        scrollTrigger:{
+          trigger:"#section-1",
+          endTrigger:"#section-2",
+          start:"top top",
+          end:"bottom bottom",
+          markers:true,
+          scrub:true,
+        }
+      })
+      tl
+      .to(dogModel.current.scene.position,{
+        z:"-=0.75",
+        y:"+=0.1",//3.08.50
+      })
+      .to(dogModel.current.scene.rotation,{
+        x:`+=${Math.PI/15}`
+      })
+      .to(dogModel.current.scene.rotation,{
+        y:`-=${Math.PI}`
+      },"third")
+      .to(dogModel.current.scene.position,{
+        x:"-=0.5",
+        z:"+=0.6",
+        y:"-=0.05"
+      },"third")
+    },[]);
+
   return (
 
 <>
@@ -90,7 +127,7 @@ import { OrbitControls,useGLTF,useTexture,useAnimations } from '@react-three/dre
 
 <primitive object={model.scene} position={[0.25,-0.55,0]} rotation={[0,Math.PI/3.9,0]}/>
 <directionalLight position={[0,5,5]} color={0xFFFFFF} intensity={10}/>
- {/* <OrbitControls/> */}
+  {/* <OrbitControls/>  */}
  {/*through OrbitControls we can rotate the camera around the object*/}
 </>
 
