@@ -95,7 +95,7 @@ gsap.registerPlugin(useGSAP());
           endTrigger:"#section-2",
           start:"top top",
           end:"bottom bottom",
-          markers:true,
+          //markers:true,
           scrub:true,
         }
       })
