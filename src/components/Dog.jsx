@@ -180,7 +180,7 @@ const [
           endTrigger:"#section-4",
           start:"top top",
           end:"bottom bottom",
-          markers:true,
+          markers:false,
           scrub:true,
         }
       })
